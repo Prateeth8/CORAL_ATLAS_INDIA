@@ -19,12 +19,13 @@
     --muted: #5a6a80;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--sand); color:var(--text); font-family:'Source Sans 3',sans-serif; min-height:100vh; }
+  body { background:var(--sand); color:var(--text); font-family:'Source Sans 3',sans-serif; min-height:100vh; overflow-x: hidden; }
 
   header {
     background:var(--navy); padding:0 48px;
     display:flex; align-items:center; justify-content:space-between; height:64px;
     box-shadow:0 2px 12px rgba(10,35,66,.3);
+    position: sticky; top: 0; z-index: 100;
   }
   .site-title { font-family:'Playfair Display',serif; font-size:22px; font-weight:900; color:#fff; letter-spacing:1px; }
   .site-title span { color:#7ec8f0; }
@@ -34,7 +35,7 @@
 
   .hero {
     background:linear-gradient(135deg,var(--navy) 0%,var(--ocean) 60%,#1a7ab5 100%);
-    padding:56px 48px 64px; position:relative; overflow:hidden;
+    padding:56px 48px 84px; position:relative; overflow:hidden;
   }
   .hero::after {
     content:''; position:absolute; bottom:0; left:0; right:0; height:36px;
@@ -64,81 +65,92 @@
   .note-box {
     background:var(--foam); border-left:4px solid var(--ocean); border-radius:0 6px 6px 0;
     padding:14px 18px; font-size:13px; color:var(--navy); margin-bottom:36px; line-height:1.6;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   }
 
-  /* MAP */
+  /* MAP SECTION */
   .map-section {
     background:#fff; border:1px solid var(--sand2); border-radius:10px;
-    overflow:hidden; margin-bottom:52px; box-shadow:0 2px 16px rgba(10,35,66,.07);
+    overflow:hidden; margin-bottom:52px; box-shadow:0 8px 32px rgba(10,35,66,0.1);
   }
   .map-topbar {
     background:var(--navy); padding:12px 20px;
     display:flex; align-items:center; justify-content:space-between;
   }
-  .map-topbar-title { font-size:12px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,.8); }
-  .legend-item { display:flex; align-items:center; gap:6px; font-size:11px; color:rgba(255,255,255,.65); }
-  .legend-dot { width:10px; height:10px; border-radius:50%; background:var(--coral); }
+  .map-topbar-title { font-size:12px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,.9); }
+  .legend-item { display:flex; align-items:center; gap:8px; font-size:11px; color:rgba(255,255,255,.75); }
+  .legend-dot { width:12px; height:12px; border-radius:50%; background:var(--coral); border: 2px solid #fff; }
 
-  .map-wrapper { position:relative; background:#c8e6f5; display:block; }
-  .map-wrapper img { display:block; width:100%; max-height:620px; object-fit:contain; object-position:center; }
+  .map-wrapper { position:relative; background:#e0f2fe; width: 100%; display: flex; justify-content: center; }
+  .map-wrapper img { display:block; width:100%; height: auto; max-width: 900px; object-fit:contain; }
 
-  /* SVG pin overlay — uses viewBox="0 0 800 900" matching the wikimedia image aspect ratio */
   #pin-layer {
-    position:absolute; top:0; left:0; width:100%; height:100%;
+    position:absolute; top:0; left:50%; transform: translateX(-50%); width: 100%; height: 100%; max-width: 900px;
     pointer-events:none;
   }
   .pin-group { pointer-events:all; cursor:pointer; }
 
   .pin-circle {
     fill:var(--coral); stroke:#fff; stroke-width:2.5;
-    filter:drop-shadow(0 1px 4px rgba(0,0,0,.4));
-    transition:r .15s;
+    filter:drop-shadow(0 2px 4px rgba(0,0,0,.4));
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-origin: center;
   }
-  .pin-ring { fill:none; stroke:var(--coral); stroke-width:2; opacity:.5; animation:ripple 2.2s ease-out infinite; }
-  @keyframes ripple { 0%{r:9;opacity:.6} 100%{r:22;opacity:0} }
-  .pin-group:hover .pin-circle { r:9; }
+  .pin-ring { fill:none; stroke:var(--coral); stroke-width:2; opacity:.5; animation:ripple 2.5s infinite; transform-origin: center; }
+  @keyframes ripple { 
+    0% { transform: scale(1); opacity: 0.8; } 
+    100% { transform: scale(3.5); opacity: 0; } 
+  }
+  .pin-group:hover .pin-circle { transform: scale(1.4); }
 
   .pin-label {
-    font-family:'Source Sans 3',sans-serif; font-size:11px; font-weight:700;
-    fill:var(--navy); paint-order:stroke fill; stroke:#fff; stroke-width:3.5px;
+    font-family:'Source Sans 3',sans-serif; font-size:12px; font-weight:700;
+    fill:var(--navy); paint-order:stroke fill; stroke:#fff; stroke-width:4px;
     pointer-events:none;
   }
 
   #map-tooltip {
     position:absolute; background:var(--navy); color:#fff;
-    padding:10px 14px; border-radius:6px; font-size:12px;
-    pointer-events:none; display:none; z-index:20;
-    box-shadow:0 4px 16px rgba(0,0,0,.3); max-width:210px; line-height:1.5;
+    padding:12px 16px; border-radius:8px; font-size:13px;
+    pointer-events:none; display:none; z-index:200;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+    max-width:240px; line-height:1.5;
   }
-  #map-tooltip strong { display:block; font-weight:600; color:#7ec8f0; margin-bottom:2px; }
-  #map-tooltip .tip-hint { margin-top:6px; font-size:10px; color:rgba(255,255,255,.5); letter-spacing:.5px; }
+  #map-tooltip strong { display:block; font-weight:600; color:#7ec8f0; margin-bottom:4px; font-size: 14px; }
+  #map-tooltip .tip-hint { margin-top:8px; font-size:11px; color:rgba(255,255,255,0.5); font-style: italic; }
 
-  /* CARDS */
-  .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:18px; }
+  /* SITE CARDS */
+  .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:24px; }
   .loc-card {
-    background:#fff; border:1px solid var(--sand2); border-radius:8px;
-    padding:20px 22px; text-decoration:none; color:var(--text); display:block;
-    transition:box-shadow .2s,border-color .2s,transform .15s; position:relative;
+    background:#fff; border:1px solid var(--sand2); border-radius:12px;
+    padding:24px; text-decoration:none; color:var(--text); display:block;
+    transition: all .3s cubic-bezier(0.4, 0, 0.2, 1); position:relative;
+    overflow: hidden;
   }
-  .loc-card:hover { border-color:var(--ocean); box-shadow:0 4px 20px rgba(21,101,167,.12); transform:translateY(-2px); }
-  .card-region { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--ocean); margin-bottom:6px; }
-  .card-name { font-family:'Playfair Display',serif; font-size:16px; font-weight:700; color:var(--navy); line-height:1.3; margin-bottom:10px; }
-  .card-tags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
-  .tag { font-size:10px; font-weight:600; padding:3px 8px; border-radius:3px; background:var(--foam); color:var(--ocean); }
+  .loc-card:hover { border-color:var(--ocean); box-shadow:0 12px 24px rgba(21,101,167,0.15); transform:translateY(-4px); }
+  .card-region { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--ocean); margin-bottom:8px; }
+  .card-name { font-family:'Playfair Display',serif; font-size:18px; font-weight:800; color:var(--navy); line-height:1.3; margin-bottom:12px; }
+  .card-tags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
+  .tag { font-size:10px; font-weight:600; padding:4px 10px; border-radius:4px; background:var(--foam); color:var(--ocean); }
   .tag.coral-tag { background:#fbe8e3; color:var(--coral); }
-  .card-meta { font-size:12px; color:var(--muted); border-top:1px solid var(--sand2); padding-top:10px; }
-  .card-arrow { position:absolute; top:20px; right:18px; font-size:18px; color:var(--sand2); transition:color .2s,transform .2s; }
-  .loc-card:hover .card-arrow { color:var(--ocean); transform:translateX(3px); }
+  .card-meta { font-size:12px; color:var(--muted); border-top:1px solid #f0f0f0; padding-top:12px; display: flex; align-items: center; gap: 8px; }
+  .card-meta::before { content: '•'; color: var(--coral); font-weight: bold; }
+  .card-arrow { position:absolute; bottom:24px; right:24px; font-size:20px; color:var(--sand2); transition: all 0.2s; }
+  .loc-card:hover .card-arrow { color:var(--ocean); transform:translateX(4px); }
 
   footer {
     background:var(--navy); color:rgba(255,255,255,.55);
-    text-align:center; padding:22px 48px; font-size:12px; letter-spacing:.5px;
+    text-align:center; padding:40px 48px; font-size:13px; letter-spacing:.5px;
   }
   footer strong { color:rgba(255,255,255,.85); font-weight:600; }
 
-  @media(max-width:700px){
-    header{padding:0 16px;} .hero{padding:36px 16px 52px;} .content{padding:28px 12px 60px;}
-    .stat-item{padding:14px 18px;} .stats-row{flex-wrap:wrap;}
+  @media(max-width:768px){
+    header{padding:0 20px;} .hero{padding:40px 24px 60px;} .content{padding:32px 20px 60px;}
+    .stat-item{padding:16px; flex: 1 1 45%; border-bottom: 1px solid var(--sand2); }
+    .stat-item:nth-child(2) { border-right: none; }
+    .stat-item:last-child { border-bottom: none; }
+    .stats-row{flex-wrap:wrap;}
+    .pin-label { display: none; }
   }
 </style>
 </head>
@@ -154,26 +166,26 @@
 
 <div class="hero">
   <div>
-    <div class="hero-label">Sentinel-2 &nbsp;·&nbsp; NDWI &nbsp;·&nbsp; Coral Index &nbsp;·&nbsp; January 2026</div>
+    <div class="hero-label">Sentinel-2 • NDWI • Coral Index • January 2026</div>
     <h1>Mapping India's Coral<br>Reef Ecosystems</h1>
-    <p>Spectral analysis of coral reef habitats across India's coastlines and island territories using Sentinel-2 satellite imagery. Results include NDWI and Coral Index maps for January 2026.</p>
+    <p>High-resolution spectral analysis of coral reef habitats across India's coastline and island territories using Sentinel-2 MSI satellite imagery.</p>
   </div>
 </div>
 
 <div class="stats-row">
   <div class="stat-item"><div class="stat-num">8</div><div class="stat-lbl">Study Locations</div></div>
-  <div class="stat-item"><div class="stat-num">2</div><div class="stat-lbl">Indices per Site</div></div>
-  <div class="stat-item"><div class="stat-num">Jan 2026</div><div class="stat-lbl">Analysis Period</div></div>
-  <div class="stat-item"><div class="stat-num">10 m</div><div class="stat-lbl">Resolution</div></div>
+  <div class="stat-item"><div class="stat-num">Jan 2026</div><div class="stat-lbl">Data Window</div></div>
+  <div class="stat-item"><div class="stat-num">10m</div><div class="stat-lbl">Resolution</div></div>
+  <div class="stat-item"><div class="stat-num">Sentinel-2</div><div class="stat-lbl">Sensor</div></div>
 </div>
 
 <div class="content">
 
   <div class="note-box">
-    📌 Click any red marker on the map, or a card below, to view the NDWI and Coral Index results for that location.
+    📌 <strong>Interactive Map:</strong> Click any red marker to view the NDWI and Coral Index results for that location.
   </div>
 
-  <h2 class="section-heading">Study Locations</h2>
+  <h2 class="section-heading">Geospatial Distribution</h2>
   <p class="section-sub">All sites mapped using Sentinel-2 MSI imagery (ESA / Copernicus programme).</p>
 
   <div class="map-section">
@@ -183,132 +195,122 @@
     </div>
 
     <div class="map-wrapper" id="mapWrapper">
-      <!--
-        Map image: Wikimedia Commons – "India location map unlabeled.svg"
-        https://commons.wikimedia.org/wiki/File:India_location_map_unlabeled.svg
-        License: Public Domain
-      -->
       <img id="india-bg"
-        src="images/india-1024px-map.png"
-        alt="Outline map of India"
+        src="https://upload.wikimedia.org/wikipedia/commons/b/b1/India_location_map_unlabeled.svg"
+        alt="Geographic Map of India"
       />
 
-      <!--
-        SVG viewBox matches the rendered image pixel dimensions (1024 × 1157 px).
-        Pin coordinates were placed against the Wikimedia India outline map.
-        Each cx/cy is in image-pixels (out of 1024 × 1157).
-      -->
       <svg id="pin-layer" viewBox="0 0 1024 1157" preserveAspectRatio="xMidYMid meet">
 
-<!-- Gulf of Kutch -->
-<a href="gulf-of-kutch.html">
-<g class="pin-group" data-name="Gulf of Kutch" data-sub="Mora, Bahyadar, Pirotan & Kalubhar Tapu · Gujarat">
-<circle class="pin-ring" cx="175" cy="325"/>
-<circle class="pin-circle" cx="175" cy="325" r="7"/>
-<text class="pin-label" x="190" y="323">Gulf of Kutch</text>
-</g>
-</a>
+        <!-- 1. Gulf of Kutch (Gujarat) -->
+        <a href="gulf-of-kutch.html">
+          <g class="pin-group" data-name="Gulf of Kutch" data-sub="Mora, Pirotan & Kalubhar Tapu • Gujarat">
+            <circle class="pin-ring" cx="170" cy="325" r="5"/>
+            <circle class="pin-circle" cx="170" cy="325" r="8"/>
+            <text class="pin-label" x="185" y="325">Gulf of Kutch</text>
+          </g>
+        </a>
 
-<!-- Grande & Bat Island -->
-<a href="grande-bat.html">
-<g class="pin-group" data-name="Grande & Bat Island" data-sub="Goa · Arabian Sea">
-<circle class="pin-ring" cx="260" cy="565"/>
-<circle class="pin-circle" cx="260" cy="565" r="7"/>
-<text class="pin-label" x="275" y="563">Grande & Bat I.</text>
-</g>
-</a>
+        <!-- 2. Grande & Bat Island (Goa) -->
+        <a href="grande-bat.html">
+          <g class="pin-group" data-name="Grande & Bat Island" data-sub="Goa Coast • Arabian Sea">
+            <circle class="pin-ring" cx="278" cy="590" r="5"/>
+            <circle class="pin-circle" cx="278" cy="590" r="8"/>
+            <text class="pin-label" x="293" y="590">Grande & Bat I.</text>
+          </g>
+        </a>
 
-<!-- Netrani Island -->
-<a href="netrani.html">
-<g class="pin-group" data-name="Netrani Island" data-sub="Karnataka · Arabian Sea">
-<circle class="pin-ring" cx="265" cy="610"/>
-<circle class="pin-circle" cx="265" cy="610" r="7"/>
-<text class="pin-label" x="280" y="608">Netrani Island</text>
-</g>
-</a>
+        <!-- 3. Netrani Island (Karnataka) -->
+        <a href="netrani.html">
+          <g class="pin-group" data-name="Netrani Island" data-sub="Murudeshwar • Karnataka">
+            <circle class="pin-ring" cx="288" cy="625" r="5"/>
+            <circle class="pin-circle" cx="288" cy="625" r="8"/>
+            <text class="pin-label" x="303" y="625">Netrani Island</text>
+          </g>
+        </a>
 
-<!-- Lakshadweep -->
-<a href="lakshadweep.html">
-<g class="pin-group" data-name="Lakshadweep Islands" data-sub="UT Lakshadweep · Arabian Sea">
-<circle class="pin-ring" cx="115" cy="690"/>
-<circle class="pin-circle" cx="115" cy="690" r="7"/>
-<text class="pin-label" x="130" y="688">Lakshadweep</text>
-</g>
-</a>
+        <!-- 4. Lakshadweep (UT) -->
+        <a href="lakshadweep.html">
+          <g class="pin-group" data-name="Lakshadweep Islands" data-sub="UT Lakshadweep • Arabian Sea">
+            <circle class="pin-ring" cx="135" cy="800" r="5"/>
+            <circle class="pin-circle" cx="135" cy="800" r="8"/>
+            <text class="pin-label" x="150" y="800">Lakshadweep</text>
+          </g>
+        </a>
 
-<!-- Ramsagar & Chuksar -->
-<a href="ramsagar-chuksar.html">
-<g class="pin-group" data-name="Ramsagar & Chuksar Island" data-sub="Bay of Bengal">
-<circle class="pin-ring" cx="735" cy="330"/>
-<circle class="pin-circle" cx="735" cy="330" r="7"/>
-<text class="pin-label" x="560" y="328">Ramsagar & Chuksar</text>
-</g>
-</a>
+        <!-- 5. Ramsagar & Chuksar (West Bengal) -->
+        <a href="ramsagar-chuksar.html">
+          <g class="pin-group" data-name="Ramsagar & Chuksar" data-sub="Sundarbans Region • Bay of Bengal">
+            <circle class="pin-ring" cx="765" cy="345" r="5"/>
+            <circle class="pin-circle" cx="765" cy="345" r="8"/>
+            <text class="pin-label" x="590" y="345" text-anchor="end">Ramsagar & Chuksar</text>
+          </g>
+        </a>
 
-<!-- Abdul Kalam Island -->
-<a href="abdul-kalam.html">
-<g class="pin-group" data-name="Abdul Kalam Island" data-sub="Odisha · Bay of Bengal">
-<circle class="pin-ring" cx="710" cy="390"/>
-<circle class="pin-circle" cx="710" cy="390" r="7"/>
-<text class="pin-label" x="540" y="388">Abdul Kalam I.</text>
-</g>
-</a>
+        <!-- 6. Abdul Kalam Island (Odisha) -->
+        <a href="abdul-kalam.html">
+          <g class="pin-group" data-name="Abdul Kalam Island" data-sub="Bhadrak District • Odisha">
+            <circle class="pin-ring" cx="735" cy="405" r="5"/>
+            <circle class="pin-circle" cx="735" cy="405" r="8"/>
+            <text class="pin-label" x="580" y="405" text-anchor="end">Abdul Kalam I.</text>
+          </g>
+        </a>
 
-<!-- Gulf of Mannar -->
-<a href="gulf-of-mannar.html">
-<g class="pin-group" data-name="Gulf of Mannar" data-sub="Deepu Sagar, Vaalai Theevu, Valimunai, Anaipaar & Ram Setu">
-<circle class="pin-ring" cx="520" cy="1000"/>
-<circle class="pin-circle" cx="520" cy="1000" r="7"/>
-<text class="pin-label" x="535" y="998">Gulf of Mannar</text>
-</g>
-</a>
+        <!-- 7. Gulf of Mannar (Tamil Nadu) -->
+        <a href="gulf-of-mannar.html">
+          <g class="pin-group" data-name="Gulf of Mannar" data-sub="Deepu Sagar, Valimunai & Ram Setu">
+            <circle class="pin-ring" cx="515" cy="1030" r="5"/>
+            <circle class="pin-circle" cx="515" cy="1030" r="8"/>
+            <text class="pin-label" x="530" y="1030">Gulf of Mannar</text>
+          </g>
+        </a>
 
-<!-- Andaman & Nicobar -->
-<a href="andaman-nicobar.html">
-<g class="pin-group" data-name="Andaman & Nicobar Islands" data-sub="UT Andaman & Nicobar · Bay of Bengal">
-<circle class="pin-ring" cx="910" cy="630"/>
-<circle class="pin-circle" cx="910" cy="630" r="7"/>
-<text class="pin-label" x="750" y="628">A & N Islands</text>
-</g>
-</a>
+        <!-- 8. Andaman & Nicobar (UT) -->
+        <a href="andaman-nicobar.html">
+          <g class="pin-group" data-name="Andaman & Nicobar" data-sub="UT Andaman & Nicobar • Bay of Bengal">
+            <circle class="pin-ring" cx="915" cy="760" r="5"/>
+            <circle class="pin-circle" cx="915" cy="760" r="8"/>
+            <text class="pin-label" x="895" y="760" text-anchor="end">A & N Islands</text>
+          </g>
+        </a>
 
-</svg>
+      </svg>
 
       <div id="map-tooltip"></div>
     </div>
   </div>
 
   <div class="note-box">
-    Currently, only Netrani Island outputs are available. Lakshadweep and Grande & Bat Islands will be available soon.
+    Currently, only Netrani Island outputs are available. Other sites will be available soon.
   </div>
 
   <!-- SITE CARDS -->
   <h2 class="section-heading" id="sites">All Study Sites</h2>
-  <p class="section-sub" style="margin-bottom:24px">Click a site to view its NDWI and Coral Index images (January 2026).</p>
+  <p class="section-sub" style="margin-bottom:24px">Click a site card below to view its spectral analysis results.</p>
 
   <div class="cards-grid">
 
     <a href="netrani.html" class="loc-card">
-      <div class="card-region">Karnataka · Arabian Sea</div>
+      <div class="card-region">Karnataka • Arabian Sea</div>
       <div class="card-name">Netrani Island</div>
       <div class="card-tags"><span class="tag">NDWI</span><span class="tag coral-tag">Coral Index</span></div>
-      <div class="card-meta">Jan 2026 · Sentinel-2</div>
+      <div class="card-meta">Jan 2026 • Sentinel-2</div>
       <span class="card-arrow">→</span>
     </a>
 
     <a href="grande-bat.html" class="loc-card">
-      <div class="card-region">Goa · Arabian Sea</div>
+      <div class="card-region">Goa • Arabian Sea</div>
       <div class="card-name">Grande & Bat Island</div>
       <div class="card-tags"><span class="tag">NDWI</span><span class="tag coral-tag">Coral Index</span></div>
-      <div class="card-meta">Jan 2026 · Sentinel-2</div>
+      <div class="card-meta">Jan 2026 • Sentinel-2</div>
       <span class="card-arrow">→</span>
     </a>
 
     <a href="gulf-of-kutch.html" class="loc-card">
-      <div class="card-region">Gujarat · Gulf of Kutch</div>
+      <div class="card-region">Gujarat • Gulf of Kutch</div>
       <div class="card-name">Mora, Bahyadar, Pirotan & Kalubhar Tapu</div>
       <div class="card-tags"><span class="tag">NDWI</span><span class="tag coral-tag">Coral Index</span></div>
-      <div class="card-meta">Jan 2026 · Sentinel-2</div>
+      <div class="card-meta">Jan 2026 • Sentinel-2</div>
       <span class="card-arrow">→</span>
     </a>
 
@@ -316,31 +318,31 @@
       <div class="card-region">Bay of Bengal</div>
       <div class="card-name">Ramsagar & Chuksar Island</div>
       <div class="card-tags"><span class="tag">NDWI</span><span class="tag coral-tag">Coral Index</span></div>
-      <div class="card-meta">Jan 2026 · Sentinel-2</div>
+      <div class="card-meta">Jan 2026 • Sentinel-2</div>
       <span class="card-arrow">→</span>
     </a>
 
     <a href="abdul-kalam.html" class="loc-card">
-      <div class="card-region">Odisha · Bay of Bengal</div>
+      <div class="card-region">Odisha • Bay of Bengal</div>
       <div class="card-name">Abdul Kalam Island</div>
       <div class="card-tags"><span class="tag">NDWI</span><span class="tag coral-tag">Coral Index</span></div>
-      <div class="card-meta">Jan 2026 · Sentinel-2</div>
+      <div class="card-meta">Jan 2026 • Sentinel-2</div>
       <span class="card-arrow">→</span>
     </a>
 
     <a href="gulf-of-mannar.html" class="loc-card">
-      <div class="card-region">Tamil Nadu · Gulf of Mannar</div>
-      <div class="card-name">Deepu Sagar, Vaalai Theevu, Valimunai, Anaipaar & Ram Setu</div>
+      <div class="card-region">Tamil Nadu • South Coast</div>
+      <div class="card-name">Gulf of Mannar Biosphere</div>
       <div class="card-tags"><span class="tag">NDWI</span><span class="tag coral-tag">Coral Index</span></div>
-      <div class="card-meta">Jan 2026 · Sentinel-2</div>
+      <div class="card-meta">Jan 2026 • Sentinel-2</div>
       <span class="card-arrow">→</span>
     </a>
 
     <a href="lakshadweep.html" class="loc-card">
-      <div class="card-region">UT Lakshadweep · Arabian Sea</div>
+      <div class="card-region">UT Lakshadweep • Arabian Sea</div>
       <div class="card-name">Lakshadweep Islands</div>
-      <div class="card-tags"><span class="tag">NDWI</span><span class="tag coral-tag">Coral Index</span><span class="tag">3 Islands</span></div>
-      <div class="card-meta">Jan 2026 · Sentinel-2</div>
+      <div class="card-tags"><span class="tag">NDWI</span><span class="tag coral-tag">Coral Index</span></div>
+      <div class="card-meta">Jan 2026 • Sentinel-2</div>
       <span class="card-arrow">→</span>
     </a>
 
@@ -348,7 +350,7 @@
       <div class="card-region">UT Andaman & Nicobar</div>
       <div class="card-name">Andaman & Nicobar Islands</div>
       <div class="card-tags"><span class="tag">NDWI</span><span class="tag coral-tag">Coral Index</span></div>
-      <div class="card-meta">Jan 2026 · Sentinel-2</div>
+      <div class="card-meta">Jan 2026 • Sentinel-2</div>
       <span class="card-arrow">→</span>
     </a>
 
@@ -356,8 +358,7 @@
 </div>
 
 <footer>
-  <strong>Indian Coral Atlas</strong> &nbsp;·&nbsp; Sentinel-2 MSI &nbsp;·&nbsp; ESA Copernicus &nbsp;·&nbsp; January 2026
-  &nbsp;·&nbsp; Map: Wikimedia Commons (Public Domain)
+  <strong>Indian Coral Atlas</strong> • Sentinel-2 MSI • ESA Copernicus • January 2026
 </footer>
 
 <script>
@@ -366,21 +367,32 @@
   const pinGroups = document.querySelectorAll('.pin-group');
 
   pinGroups.forEach(g => {
-    g.addEventListener('mouseenter', () => {
+    g.addEventListener('mouseenter', (e) => {
       tooltip.innerHTML = `<strong>${g.dataset.name}</strong>${g.dataset.sub}<div class="tip-hint">Click to view results →</div>`;
       tooltip.style.display = 'block';
+      updateTooltipPos(e);
     });
+
     g.addEventListener('mousemove', e => {
-      const r = wrapper.getBoundingClientRect();
-      let x = e.clientX - r.left + 14;
-      let y = e.clientY - r.top  - 10;
-      if (x + 220 > r.width) x = e.clientX - r.left - 230;
-      tooltip.style.left = x + 'px';
-      tooltip.style.top  = y + 'px';
+      updateTooltipPos(e);
     });
-    g.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+
+    g.addEventListener('mouseleave', () => { 
+      tooltip.style.display = 'none'; 
+    });
   });
+
+  function updateTooltipPos(e) {
+    const r = wrapper.getBoundingClientRect();
+    let x = e.clientX - r.left + 18;
+    let y = e.clientY - r.top - 12;
+    
+    if (x + 240 > r.width) x = e.clientX - r.left - 260;
+    if (y + 100 > r.height) y = e.clientY - r.top - 110;
+
+    tooltip.style.left = x + 'px';
+    tooltip.style.top  = y + 'px';
+  }
 </script>
-<!-- Corrected CORAL INDIA ATLAS webpage -->
 </body>
 </html>
