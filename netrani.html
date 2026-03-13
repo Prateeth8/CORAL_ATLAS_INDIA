@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Netrani Island — Indian Coral Atlas</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:  #0a2342;
+    --ocean: #1565a7;
+    --sky:   #4a90d9;
+    --foam:  #d0eaf8;
+    --sand:  #f5eed8;
+    --sand2: #e8dfc4;
+    --coral: #c0533a;
+    --white: #ffffff;
+    --text:  #1a2535;
+    --muted: #5a6a80;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--sand); color:var(--text); font-family:'Source Sans 3',sans-serif; min-height:100vh; }
+
+  header {
+    background:var(--navy); padding:0 48px;
+    display:flex; align-items:center; justify-content:space-between; height:64px;
+    box-shadow:0 2px 12px rgba(10,35,66,.3);
+  }
+  .back-link {
+    display:flex; align-items:center; gap:8px; text-decoration:none;
+    color:rgba(255,255,255,.75); font-size:13px; font-weight:600;
+    border:1px solid rgba(255,255,255,.2); padding:7px 16px; border-radius:4px;
+    transition:color .2s,border-color .2s;
+  }
+  .back-link:hover { color:#fff; border-color:rgba(255,255,255,.5); }
+  .site-brand { font-family:'Playfair Display',serif; font-size:18px; font-weight:900; color:#fff; }
+  .site-brand span { color:#7ec8f0; }
+  .header-right { font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,.4); }
+
+  .page-hero {
+    background:linear-gradient(135deg,var(--navy) 0%,var(--ocean) 60%,#1a7ab5 100%);
+    padding:44px 48px 56px; position:relative; overflow:hidden;
+  }
+  .page-hero::after {
+    content:''; position:absolute; bottom:0; left:0; right:0; height:32px;
+    background:var(--sand); clip-path:ellipse(55% 100% at 50% 100%);
+  }
+  .breadcrumb { font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#a8d8f0; margin-bottom:12px; }
+  .page-title { font-family:'Playfair Display',serif; font-size:clamp(26px,4vw,46px); font-weight:900; color:#fff; line-height:1.1; margin-bottom:10px; }
+  .page-subtitle { font-size:15px; color:rgba(255,255,255,.75); font-weight:300; }
+
+  .content { max-width:1100px; margin:0 auto; padding:44px 32px 80px; }
+
+  .index-info {
+    background:var(--foam); border:1px solid #b3d7f0; border-radius:8px;
+    padding:18px 22px; margin-bottom:36px;
+    display:grid; grid-template-columns:1fr 1fr; gap:16px;
+  }
+  .index-info-block h4 {
+    font-family:'Playfair Display',serif; font-size:15px; font-weight:700;
+    color:var(--navy); margin-bottom:4px;
+  }
+  .index-info-block p { font-size:13px; color:var(--muted); line-height:1.6; }
+
+  /* Results section */
+  .results-section { margin-bottom:52px; }
+  .results-section-title {
+    font-family:'Playfair Display',serif; font-size:22px; font-weight:700;
+    color:var(--navy); padding-bottom:10px;
+    border-bottom:2px solid var(--sand2); margin-bottom:24px;
+  }
+  .results-section-sub { font-size:13px; color:var(--muted); margin-top:-16px; margin-bottom:24px; }
+
+  /* Image pair */
+  .img-pair { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .img-card {
+    background:#fff; border:1px solid var(--sand2); border-radius:8px;
+    overflow:hidden; box-shadow:0 1px 8px rgba(10,35,66,.06);
+  }
+  .img-card-header {
+    background:var(--navy); padding:10px 16px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .img-card-title { font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#fff; }
+  .img-card-badge {
+    font-size:10px; font-weight:600; letter-spacing:1px; text-transform:uppercase;
+    padding:3px 8px; border-radius:3px;
+  }
+  .badge-ndwi   { background:rgba(74,144,217,.3); color:#a8d8f0; }
+  .badge-coral  { background:rgba(192,83,58,.3);  color:#f5b8a8; }
+  .img-placeholder {
+    background:var(--foam); height:300px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:10px; border-bottom:1px dashed #b3d7f0;
+  }
+  .img-placeholder .ph-icon { font-size:36px; opacity:.5; }
+  .img-placeholder .ph-text { font-size:12px; font-weight:600; letter-spacing:1px; color:var(--muted); text-align:center; line-height:1.6; }
+  .img-placeholder img { max-width:100%; max-height:100%; object-fit:contain; display:none; }
+  .img-caption { padding:10px 16px; font-size:12px; color:var(--muted); background:#fafafa; border-top:1px solid var(--sand2); }
+  .img-caption strong { color:var(--navy); }
+
+  /* How to add images note */
+  .add-images-note {
+    background:#fff8f0; border:1px solid #f5cfa8; border-radius:6px;
+    padding:12px 16px; font-size:12px; color:#7a4a20; margin-top:16px; line-height:1.7;
+  }
+  .add-images-note code {
+    background:#f5e8d8; padding:1px 5px; border-radius:3px;
+    font-family:'Courier New',monospace; font-size:11px;
+  }
+
+  footer {
+    background:var(--navy); color:rgba(255,255,255,.55);
+    text-align:center; padding:22px 48px; font-size:12px; letter-spacing:.5px;
+  }
+  footer strong { color:rgba(255,255,255,.85); font-weight:600; }
+
+  @media(max-width:700px){
+    header{padding:0 16px;} .page-hero{padding:32px 16px 48px;} .content{padding:28px 12px 60px;}
+    .img-pair{grid-template-columns:1fr;} .index-info{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="back-link">← Back to Atlas</a>
+  <div class="site-brand">Indian <span>Coral</span> Atlas</div>
+  <span class="header-right">Sentinel-2 · Jan 2026</span>
+</header>
+
+<div class="page-hero">
+  <div class="breadcrumb">Sentinel-2 Analysis &nbsp;·&nbsp; Karnataka</div>
+  <h1 class="page-title">Netrani Island</h1>
+  <p class="page-subtitle">Karnataka Coast · Arabian Sea</p>
+</div>
+
+<div class="content">
+
+  <div class="index-info">
+    <div class="index-info-block">
+      <h4>NDWI — Normalized Difference Water Index</h4>
+      <p>Computed as (Green − NIR) / (Green + NIR) using Sentinel-2 bands B3 and B8. Highlights water bodies and submerged reef structures. Values range from −1 (land) to +1 (open water).</p>
+    </div>
+    <div class="index-info-block">
+      <h4>Coral Spectral Index</h4>
+      <p>Derived from Sentinel-2 red-edge and NIR bands to discriminate live coral from algae, sediment, and bleached substrate. Higher values indicate greater live coral reflectance signature.</p>
+    </div>
+  </div>
+
+  <div class="results-section">
+    <h2 class="results-section-title">Results — January 2026</h2>
+    <p class="results-section-sub">Sentinel-2 MSI · 10 m resolution · ESA Copernicus</p>
+
+    <div class="img-pair">
+      <div class="img-card">
+        <div class="img-card-header">
+          <span class="img-card-title">NDWI</span>
+          <span class="img-card-badge badge-ndwi">Water Index</span>
+        </div>
+        <div class="img-placeholder" id="ndwi-holder">
+          <span class="ph-icon">🛰</span>
+          <span class="ph-text">NDWI image — January 2026<br><em>Place your image file here</em></span>
+          <img src="images/netrani_ndwi_jan2026.png" alt="NDWI — Netrani Island" onload="this.style.display='block';this.parentElement.querySelector('.ph-icon').style.display='none';this.parentElement.querySelector('.ph-text').style.display='none';" />
+        </div>
+        <div class="img-caption">
+          <strong>NDWI · Netrani Island</strong> &nbsp;|&nbsp; January 2026 &nbsp;|&nbsp; Sentinel-2 B3, B8
+        </div>
+      </div>
+
+      <div class="img-card">
+        <div class="img-card-header">
+          <span class="img-card-title">Coral Index</span>
+          <span class="img-card-badge badge-coral">Spectral Index</span>
+        </div>
+        <div class="img-placeholder" id="coral-holder">
+          <span class="ph-icon">🪸</span>
+          <span class="ph-text">Coral Index image — January 2026<br><em>Place your image file here</em></span>
+          <img src="images/netrani_coral_jan2026.png" alt="Coral Index — Netrani Island" onload="this.style.display='block';this.parentElement.querySelector('.ph-icon').style.display='none';this.parentElement.querySelector('.ph-text').style.display='none';" />
+        </div>
+        <div class="img-caption">
+          <strong>Coral Index · Netrani Island</strong> &nbsp;|&nbsp; January 2026 &nbsp;|&nbsp; Sentinel-2 B5, B4
+        </div>
+      </div>
+    </div>
+
+    <div class="add-images-note">
+      📂 <strong>To add your images:</strong> Save your NDWI image as <code>images/netrani_ndwi_jan2026.png</code> and your Coral Index image as <code>images/netrani_coral_jan2026.png</code> in the same folder as this HTML file. They will appear automatically.
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <strong>Indian Coral Atlas</strong> &nbsp;·&nbsp; Netrani Island &nbsp;·&nbsp; Sentinel-2 MSI &nbsp;·&nbsp; January 2026
+</footer>
+
+</body>
+</html>
